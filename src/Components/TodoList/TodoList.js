@@ -2,7 +2,7 @@ import React  from "react";
 import { Component } from "react";
 import './TodoList.css';
 import TodoForm from "../TodoForm/TodoForm";
-
+import TodoListItems from "../TodoListItems/TodoListItems";
 class TodoList extends Component {
     state = {
         todos:[],
@@ -42,6 +42,7 @@ class TodoList extends Component {
                 handleChange={this.handleChange}
                 handleSubmit={this.handleSubmit}
                 />
+                <TodoListItems todos={this.state.todos}/>
             </div>
 
         );
