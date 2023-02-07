@@ -1,52 +1,89 @@
-import React  from "react";
-import { Component } from "react";
+import React , { Component } from 'react';
 import './TodoList.css';
-import TodoForm from "../TodoForm/TodoForm";
-import TodoListItems from "../TodoListItems/TodoListItems";
+import TodoForm from '../TodoForm/TodoForm.js';
+import TodoListItems from '../TodoListItems/TodoListItems.js';
+
 class TodoList extends Component {
-    state = {
-        todos:[],
-        newTodo: "",
+  state = {
+    todos: [],
+    newTodo: "",
+  };
+
+  handleChange = (event) => {
+    this.setState({ newTodo: event.target.value });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    let todosLength = this.state.todos.length;
+    if (this.state.newTodo === "") {
+      return;
     }
+    this.setState({
+      newTodo: "",
+      todos: [
+        ...this.state.todos,
+        {
+          id: (todosLength += 1),
+          title: this.state.newTodo,
+          isCompleted: false,
+        },
+      ],
+    });
+  };
 
-    handleChange = (event) => {
-        this.setState({newTodo: event.target.value});
-    }
+  toggleCompleted = (event, index) => {
+    const todoCompleted = this.state.todos.filter((todo) => {
+      if (todo.id === index + 1) {
+        todo.isCompleted = event.target.checked;
+      }
+      return todo;
+    });
+    this.setState({ todos: todoCompleted });
+  };
 
-    handleSubmit = (event) =>{
-        event.preventDefault();
+  removeTodo = (index) => {
+    const { todos } = this.state;
+    todos.splice(index, 1);
+    this.setState({
+      todos,
+    });
+  };
 
-        let todosLength = this.state.todos.length;
-
-
-        this.setState({
-            newTodo:'',
-            todos: [
-                ...this.state.todos,
-                {
-                    id: (todosLength += 1),
-                    title: this.state.newTodo,
-                    iSCompleted: false                    
-                }
-            ]
-        })
-    }
+  editTodo = (index) => {
+    const newTodo = prompt('Let\'s make something changes');
+    const { todos } = this.state;
+    todos.filter(todo => {
+      if (todo.id === index + 1) {
+        todo.title = newTodo;
+      }
+      return todo;
+    });
+    this.setState({ todos });
     
-    render() { 
-        return (
-            <div className="todo-list container d-flex-column w-50 mt-5 pb-3">
-                <h1 className="display-4 fw-bold">Todo App</h1>
-                <TodoForm
-                todos={this.state.todos}
-                newTodo={this.state.newTodo}
-                handleChange={this.handleChange}
-                handleSubmit={this.handleSubmit}
-                />
-                <TodoListItems todos={this.state.todos}/>
-            </div>
+  }
 
-        );
-    }
+  render() {
+    return (
+      <div className="todo-list container d-flex-column w-50 mt-5 pb-3">
+        <p className="display-4 pt-4 fw-bold">Dedine</p>
+        <p className="text-warning display-6">Todo-App</p>
+        <TodoForm
+          todos={this.state.todos}
+          newTodo={this.state.newTodo}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
+        <TodoListItems
+          todos={this.state.todos}
+          handleOnChange={this.toggleCompleted}
+          handleOnRemove={this.removeTodo}
+          handleOnEdit={this.editTodo}
+        />
+      </div>
+    );
+  }
 }
- 
+
 export default TodoList;
